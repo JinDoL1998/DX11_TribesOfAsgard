@@ -1,0 +1,135 @@
+#include "HUDKey_LButton.h"
+#include "GameInstance.h"
+
+CHUDKey_LButton::CHUDKey_LButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CUIObject{ pDevice, pContext }
+{
+}
+
+CHUDKey_LButton::CHUDKey_LButton(const CHUDKey_LButton& Prototype)
+	: CUIObject{ Prototype }
+{
+}
+
+HRESULT CHUDKey_LButton::Initialize_Prototype()
+{
+	return S_OK;
+}
+
+HRESULT CHUDKey_LButton::Initialize(void* pArg)
+{
+	CUIObject::UIOBJECT_DESC	Desc{};
+
+	Desc.fX = 80.f;
+	Desc.fY = 655.f;
+	Desc.fSizeX = 30.f;
+	Desc.fSizeY = 30.f;
+
+	if (FAILED(__super::Initialize(&Desc)))
+		return E_FAIL;
+
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CHUDKey_LButton::Priority_Update(_float fTimeDelta)
+{
+}
+
+void CHUDKey_LButton::Update(_float fTimeDelta)
+{
+}
+
+void CHUDKey_LButton::Late_Update(_float fTimeDelta)
+{
+	m_pGameInstance->Add_RenderGroup(RENDER::HUD, this);
+}
+
+HRESULT CHUDKey_LButton::Render()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Begin(0)))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBufferCom->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CHUDKey_LButton::Ready_Components()
+{
+	/* Com_VIBuffer */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+		return E_FAIL;
+
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_HUDKey_LButton"),
+		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
+
+	/* Com_Shader */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CHUDKey_LButton::Bind_ShaderResources()
+{
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+CHUDKey_LButton* CHUDKey_LButton::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CHUDKey_LButton* pInstance = new CHUDKey_LButton(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed to Created : pGraphic_Device");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CGameObject* CHUDKey_LButton::Clone(void* pArg)
+{
+	CHUDKey_LButton* pInstance = new CHUDKey_LButton(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CHUDKey_LButton");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+void CHUDKey_LButton::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pShaderCom);
+}
