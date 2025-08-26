@@ -11,8 +11,6 @@ private:
 	CInput_Device(void);
 	virtual ~CInput_Device(void) = default;
 
-
-
 public:
 	_byte	Get_DIKeyState(_ubyte byKeyID)
 	{
@@ -27,19 +25,18 @@ public:
 	// 현재 마우스의 특정 축 좌표를 반환
 	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState)
 	{
-		/*	switch (eMouseState)
-			{
-			case X:
-				return m_tMouseState.lX;
-			case Y:
-				return m_tMouseState.lY;
-			case WHEEL:
-				return m_tMouseState.lZ;
-			}*/
-
 		return *((reinterpret_cast<_int*>(&m_tMouseState)) + static_cast<_uint>(eMouseState));
 	}
 
+
+public:
+	_bool Key_Down(_ubyte eKeyID);
+	_bool Key_Up(_ubyte eKeyID);
+	_bool Key_Pressing(_ubyte eKeyID);
+
+	_bool Mouse_Down(MOUSEKEYSTATE eMouseKeyID);
+	_bool Mouse_Up(MOUSEKEYSTATE eMouseKeyID);
+	_bool Mouse_Pressing(MOUSEKEYSTATE eMouseKeyID);
 
 public:
 	HRESULT Initialize(HINSTANCE hInst, HWND hWnd);
@@ -53,12 +50,11 @@ private:
 	LPDIRECTINPUTDEVICE8	m_pMouse = { nullptr };
 	LPDIRECTINPUTDEVICE8	m_pJoystick = { nullptr };
 
-
-
-
-
 private:
+	_byte					m_preKeyState[256] = {};
 	_byte					m_byKeyState[256] = {};
+
+	DIMOUSESTATE			m_preMouseState = {};
 	DIMOUSESTATE			m_tMouseState = {};
 
 public:

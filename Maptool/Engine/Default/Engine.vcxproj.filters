@@ -100,6 +100,9 @@
     <ClInclude Include="..\public\Bone.h">
       <Filter>01.Utility\03.Components\Model\Bone</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Picking.h">
+      <Filter>01.Utility\07.Picking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -182,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Bone.cpp">
       <Filter>01.Utility\03.Components\Model\Bone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Picking.cpp">
+      <Filter>01.Utility\07.Picking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +289,9 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Model\Bone">
       <UniqueIdentifier>{30ee55bd-d8f7-47da-b95e-06ff3be11e13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\07.Picking">
+      <UniqueIdentifier>{f6dd4700-25f0-43c1-8189-c40e02ed489d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

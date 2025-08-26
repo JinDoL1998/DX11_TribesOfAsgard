@@ -4,7 +4,7 @@
 CPicking::CPicking(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
-	, m_pGameInstance{ CGameInstance::Get_Instance() }
+	, m_pGameInstance{ CGameInstance::GetInstance() }
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -41,7 +41,7 @@ void CPicking::Update()
 	_vector vMouseVec = XMLoadFloat4(&vMousePos);
 
 	/* 뷰스페이스 == 로컬 * 월드행렬 * 뷰행렬 */
-	_matrix			ProjMatrixInv = m_pGameInstance->Get_Transform_Inverse_Matrix(CPipeLine::D3DTS_PROJ);
+	_matrix			ProjMatrixInv = m_pGameInstance->Get_Transform_Inverse_Matrix(D3DTS::PROJ);
 	vMouseVec = XMVector3TransformCoord(vMouseVec, ProjMatrixInv);
 
 	/* 뷰스페이스 상에서의 마우스 레이와 레이의 시작점을 구해놓는다. */
@@ -50,7 +50,7 @@ void CPicking::Update()
 	XMStoreFloat4(&m_vRayDir, vMouseVec - XMLoadFloat4(&m_vRayPos));
 
 	/* 월드스페이스 == 로컬 * 월드행렬 */
-	_matrix			ViewMatrixInv = m_pGameInstance->Get_Transform_Inverse_Matrix(CPipeLine::D3DTS_VIEW);
+	_matrix			ViewMatrixInv = m_pGameInstance->Get_Transform_Inverse_Matrix(D3DTS::VIEW);
 
 	XMStoreFloat4(&m_vRayPos, XMVector3TransformCoord(XMLoadFloat4(&m_vRayPos), ViewMatrixInv));
 	XMStoreFloat4(&m_vRayDir, XMVector3TransformNormal(XMLoadFloat4(&m_vRayDir), ViewMatrixInv));
@@ -123,7 +123,7 @@ CPicking* CPicking::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 	if (FAILED(pInstance->Initialize(hWnd, iWinSizeX, iWinSizeY)))
 	{
-		MSG_BOX(TEXT("Failed to Created : CPicking"));
+		MSG_BOX("Failed to Created : CPicking");
 		Safe_Release(pInstance);
 	}
 

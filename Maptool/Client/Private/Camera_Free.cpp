@@ -29,30 +29,32 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->Get_DIKeyState(DIK_W) & 0x80)
+	if (m_pGameInstance->Key_Pressing(DIK_W))
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
-	if (m_pGameInstance->Get_DIKeyState(DIK_S) & 0x80)
+	if (m_pGameInstance->Key_Pressing(DIK_S))
 		m_pTransformCom->Go_BackWard(fTimeDelta);
 
-	if (m_pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
+	if (m_pGameInstance->Key_Pressing(DIK_A))
 		m_pTransformCom->Go_Left(fTimeDelta);
 
-	if (m_pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
+	if (m_pGameInstance->Key_Pressing(DIK_D))
 		m_pTransformCom->Go_Right(fTimeDelta);
 
 	_long MouseMove = {};
 
-	if (MouseMove = m_pGameInstance->Get_DIMouseMove(MOUSEMOVESTATE::X))
+	if(m_pGameInstance->Mouse_KeyPressing(MOUSEKEYSTATE::RBUTTON))
 	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
-	}
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(MOUSEMOVESTATE::X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
 
-	if (MouseMove = m_pGameInstance->Get_DIMouseMove(MOUSEMOVESTATE::Y))
-	{
-		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(MOUSEMOVESTATE::Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
 	}
-	
 	__super::Bind_Matrices();
 
 }

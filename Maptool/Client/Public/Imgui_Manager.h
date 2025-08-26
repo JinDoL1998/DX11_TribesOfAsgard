@@ -1,30 +1,33 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "GameObject.h"
+#include "Base.h"
 
 NS_BEGIN(Engine)
+class CGameObject;
 NS_END
 
 NS_BEGIN(Client)
-class CImgui_Manager final : public CGameObject
+class CImgui_Manager final : public CBase
 {
+	DECLARE_SINGLETON(CImgui_Manager)
+
 private:
-	CImgui_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CImgui_Manager(const CImgui_Manager& Prototype);
+	CImgui_Manager();
 	virtual ~CImgui_Manager() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg);
-	virtual void Priority_Update(_float fTimeDelta) override;
-	virtual void Update(_float fTimeDelta) override;
-	virtual void Late_Update(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	void Priority_Update(_float fTimeDelta);
+	void Update(_float fTimeDelta);
+	void Late_Update(_float fTimeDelta);
+	HRESULT Render();
+
+private:
+	ID3D11Device* m_pDevice = nullptr;
+	ID3D11DeviceContext* m_pContext = nullptr;
 
 public:
-	static CImgui_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 
 };

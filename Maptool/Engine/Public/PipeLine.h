@@ -20,6 +20,15 @@ public:
 public:
 	const _float4x4* Get_Transform_Float4x4(D3DTS eState);
 	_matrix Get_Transform_Matrix(D3DTS eState);
+
+	_float4x4 Get_Transform_Inverse_Float4x4(D3DTS eState) const {
+		return m_TransformStateMatrixInverse[static_cast<_uint>(eState)];
+	}
+
+	_matrix Get_Transform_Inverse_Matrix(D3DTS eState) const {
+		return XMLoadFloat4x4(&m_TransformStateMatrixInverse[static_cast<_uint>(eState)]);
+	}
+
 	const _float4* Get_CamPosition();
 
 public:

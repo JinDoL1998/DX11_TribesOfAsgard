@@ -14,8 +14,6 @@ CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CLevel_GamePlay::Initialize()
 {
-	m_pImgui_Manager = CImgui_Manager::Create(m_pDevice, m_pContext);
-
 	/*if (FAILED(Ready_Lights()))
 		return E_FAIL;
 		*/
@@ -33,8 +31,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	//	return E_FAIL;
 
-	m_pImgui_Manager->Initialize(this);
-
+	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -47,8 +44,7 @@ HRESULT CLevel_GamePlay::Render()
 {
 	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
 
-	m_pImgui_Manager->Render();
-
+	CImgui_Manager::GetInstance()->Render();
 	return S_OK;
 }
 
@@ -162,10 +158,6 @@ void CLevel_GamePlay::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pImgui_Manager);
-
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	CImgui_Manager::GetInstance()->DestroyInstance();
 
 }

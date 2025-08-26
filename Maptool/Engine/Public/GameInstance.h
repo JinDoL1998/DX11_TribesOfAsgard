@@ -33,6 +33,12 @@ public:
 	_byte Get_DIKeyState(_ubyte byKeyID);
 	_byte Get_DIMouseState(MOUSEKEYSTATE eMouse);
 	_long Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
+	_bool Key_Down(_ubyte byKeyID);
+	_bool Key_Up(_ubyte byKeyID);
+	_bool Key_Pressing(_ubyte byKeyID);
+	_bool Mouse_Down(MOUSEKEYSTATE eMouseKeyID);
+	_bool Mouse_Up(MOUSEKEYSTATE eMouseKeyID);
+	_bool Mouse_KeyPressing(MOUSEKEYSTATE eMouseKeyID);
 #pragma endregion
 
 #pragma region TIMER_MANAGER
@@ -72,6 +78,9 @@ public:
 	const _float4* Get_CamPosition();
 #pragma endregion
 
+#pragma region PICKING
+
+#pragma endregion
 
 
 private:

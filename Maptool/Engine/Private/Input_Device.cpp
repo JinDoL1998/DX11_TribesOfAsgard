@@ -6,6 +6,76 @@ Engine::CInput_Device::CInput_Device(void)
 	ZeroMemory(m_byKeyState, sizeof(m_byKeyState));
 }
 
+_bool CInput_Device::Key_Down(_ubyte eKeyID)
+{
+	if (m_preKeyState[eKeyID] != m_byKeyState[eKeyID])
+	{
+		if (m_byKeyState[eKeyID] & 0x80)
+			return true;
+	}
+
+	return false;
+}
+
+_bool CInput_Device::Key_Up(_ubyte eKeyID)
+{
+	if (m_preKeyState[eKeyID] != m_byKeyState[eKeyID])
+	{
+		if (m_preKeyState[eKeyID] & 0x80)
+			return true;
+	}
+
+	return false;
+}
+
+_bool CInput_Device::Key_Pressing(_ubyte eKeyID)
+{
+	if (m_preKeyState[eKeyID] == m_byKeyState[eKeyID])
+	{
+		if (m_preKeyState[eKeyID] & 0x80)
+			return true;
+	}
+
+	return false;
+}
+
+_bool CInput_Device::Mouse_Down(MOUSEKEYSTATE eMouseKeyID)
+{
+	if (m_preMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)] != m_tMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)])
+	{
+		if (m_tMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)] & 0x80)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+_bool CInput_Device::Mouse_Up(MOUSEKEYSTATE eMouseKeyID)
+{
+	if (m_preMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)] != m_tMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)])
+	{
+		if (m_preMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)] & 0x80)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+_bool CInput_Device::Mouse_Pressing(MOUSEKEYSTATE eMouseKeyID)
+{
+	if (m_preMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)] == m_tMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)])
+	{
+		if (m_tMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)] & 0x80)
+			return true;
+	}
+
+	return false;
+}
+
 HRESULT Engine::CInput_Device::Initialize(HINSTANCE hInst, HWND hWnd)
 {
 
@@ -63,9 +133,10 @@ HRESULT Engine::CInput_Device::Initialize(HINSTANCE hInst, HWND hWnd)
 
 void Engine::CInput_Device::Update(void)
 {
-
+	memcpy(&m_preKeyState, &m_byKeyState, sizeof(_char) * 256);
 	m_pKeyBoard->GetDeviceState(256, m_byKeyState);
-	m_pMouse->GetDeviceState(sizeof(m_tMouseState), &m_tMouseState);
+	memcpy(&m_preMouseState, &m_tMouseState, sizeof(DIMOUSESTATE));
+	m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_tMouseState);
 }
 
 CInput_Device* CInput_Device::Create(HINSTANCE hInstance, HWND hWnd)
