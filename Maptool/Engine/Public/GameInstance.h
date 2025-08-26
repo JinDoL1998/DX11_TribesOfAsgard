@@ -65,6 +65,10 @@ public:
 	void Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix);
 	const _float4x4* Get_Transform_Float4x4(D3DTS eState);
 	_matrix Get_Transform_Matrix(D3DTS eState);
+
+	_float4x4 Get_Transform_Inverse_Float4x4(D3DTS eState);
+	_matrix Get_Transform_Inverse_Matrix(D3DTS eState) ;
+
 	const _float4* Get_CamPosition();
 #pragma endregion
 

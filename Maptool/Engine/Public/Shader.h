@@ -17,13 +17,14 @@ public:
 
 public:
 	HRESULT Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix);
+	HRESULT Bind_Matrices(const _char* pConstantName, const _float4x4* pMatrix, _uint iNumMatrices);
 	HRESULT Bind_SRV(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
 
 public:
 	HRESULT Begin(_uint iPassIndex);
 
 private:
-	ID3DX11Effect*				m_pEffect = { nullptr };
+	ID3DX11Effect* m_pEffect = { nullptr };
 	_uint						m_iNumPasses = { 0 };
 	vector<ID3D11InputLayout*>	m_InputLayouts;
 
@@ -31,6 +32,6 @@ public:
 	static CShader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
-};	
+};
 
 NS_END

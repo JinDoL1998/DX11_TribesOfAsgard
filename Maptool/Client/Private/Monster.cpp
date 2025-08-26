@@ -2,12 +2,12 @@
 #include "GameInstance.h"
 
 CMonster::CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject { pDevice, pContext }
+	: CGameObject{ pDevice, pContext }
 {
 }
 
 CMonster::CMonster(const CMonster& Prototype)
-	: CGameObject { Prototype }
+	: CGameObject{ Prototype }
 {
 }
 
@@ -29,14 +29,17 @@ HRESULT CMonster::Initialize(void* pArg)
 
 void CMonster::Priority_Update(_float fTimeDelta)
 {
+	int a = 10;
 }
 
 void CMonster::Update(_float fTimeDelta)
 {
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CMonster::Late_Update(_float fTimeDelta)
 {
+
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
@@ -45,23 +48,29 @@ HRESULT CMonster::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
 			return E_FAIL;
 
-		// 원하는 메테리얼로 설정해서 씀됨
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
 		/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;*/
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
+
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
+
 
 	return S_OK;
 }
@@ -74,7 +83,7 @@ HRESULT CMonster::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -83,6 +92,7 @@ HRESULT CMonster::Ready_Components()
 
 HRESULT CMonster::Bind_ShaderResources()
 {
+	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
@@ -90,6 +100,7 @@ HRESULT CMonster::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
+
 
 	return S_OK;
 }

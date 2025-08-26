@@ -209,6 +209,16 @@ _matrix CGameInstance::Get_Transform_Matrix(D3DTS eState)
 	return m_pPipeLine->Get_Transform_Matrix(eState);
 }
 
+_float4x4 CGameInstance::Get_Transform_Inverse_Float4x4(D3DTS eState)
+{
+	return m_pPipeLine->Get_Transform_Inverse_Float4x4(eState);
+}
+
+_matrix CGameInstance::Get_Transform_Inverse_Matrix(D3DTS eState)
+{
+	return m_pPipeLine->Get_Transform_Inverse_Matrix(eState);
+}
+
 const _float4* CGameInstance::Get_CamPosition()
 {
 	return m_pPipeLine->Get_CamPosition();

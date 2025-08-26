@@ -26,6 +26,9 @@ private:
 
 	HRESULT Ready_HUD_Roll_BackGround(const _wstring& strLayerTag);
 
+private:
+	class CImgui_Manager* m_pImgui_Manager = { nullptr };
+
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
 	virtual void Free() override;

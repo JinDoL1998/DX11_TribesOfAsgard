@@ -55,6 +55,9 @@
     <Filter Include="100.IMGUI">
       <UniqueIdentifier>{b847b210-426a-4e8d-abae-91c5e492973a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="100.IMGUI\Manager">
+      <UniqueIdentifier>{0563d2c5-f2b3-4166-96aa-dbb197923520}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -135,6 +138,9 @@
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h">
       <Filter>100.IMGUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Imgui_Manager.h">
+      <Filter>100.IMGUI\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -213,6 +219,9 @@
     <ClCompile Include="..\Public\ImGui\imgui_widgets.cpp">
       <Filter>100.IMGUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Imgui_Manager.cpp">
+      <Filter>100.IMGUI\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -222,6 +231,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

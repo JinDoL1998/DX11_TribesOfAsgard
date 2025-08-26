@@ -14,6 +14,8 @@
 #include <memory.h>
 #include <tchar.h>
 
-#include "imgui.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_win32.h"
+#ifdef _DEBUG
+	#include "imgui.h"
+	#include "imgui_impl_dx11.h"
+	#include "imgui_impl_win32.h"
+#endif
