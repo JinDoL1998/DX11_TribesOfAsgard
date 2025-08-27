@@ -25,9 +25,14 @@ public:
 
 	_float3 Get_Scale() const;
 
+	/* 리턴받은 행렬을 이용해 연산을 해야할 때. */
+	_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_WorldMatrix); }
+
 	const _float4x4* Get_WorldMatrixPtr() const {
 		return &m_WorldMatrix;
 	}
+
+	_matrix Get_WorldMatrixInverse() const { return XMMatrixInverse(nullptr, Get_WorldMatrix()); }
 
 	void Set_State(STATE eState, _fvector vState) {
 		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);

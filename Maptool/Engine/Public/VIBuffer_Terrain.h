@@ -12,8 +12,14 @@ private:
 	virtual ~CVIBuffer_Terrain() = default;
 
 public:
+	_uint Get_NumVerticesX() { return m_iNumVerticesX; }
+	_uint Get_NumVerticesZ() { return m_iNumVerticesZ; }
+
+public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pHeightMapFilePath);
 	virtual HRESULT Initialize(void* pArg) override;
+
+	void Change_Height(_vector vPickingPos, _float fHeight, _float fRadius);
 
 private:
 	_uint	m_iNumVerticesX = {};

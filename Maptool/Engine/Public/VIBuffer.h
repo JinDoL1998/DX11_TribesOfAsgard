@@ -12,6 +12,9 @@ protected:
 	virtual ~CVIBuffer() = default;
 
 public:
+	_float3* Get_VertexPosition() { return m_pVertexPositions; }
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 

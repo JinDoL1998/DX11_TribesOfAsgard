@@ -9,6 +9,7 @@
 #include "Timer_Manager.h"
 #include "Renderer.h"
 #include "PipeLine.h"
+#include "Picking.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -24,6 +25,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 	m_pInput_Device = CInput_Device::Create(EngineDesc.hInstance, EngineDesc.hWnd);
 	if (nullptr == m_pInput_Device)
+		return E_FAIL;
+
+	m_pPicking = CPicking::Create(*ppDevice, *ppContext, EngineDesc.hWnd, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY);
+	if (nullptr == m_pPicking)
 		return E_FAIL;
 
 	m_pPipeLine = CPipeLine::Create();
@@ -56,6 +61,8 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	m_pInput_Device->Update();
+
+	m_pPicking->Update();
 
 	m_pObject_Manager->Priority_Update(fTimeDelta);
 
@@ -212,6 +219,11 @@ HRESULT CGameInstance::Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const 
 	return m_pObject_Manager->Add_GameObject_ToLayer(iPrototypeLevelIndex, strPrototypeTag, iLayerLevelIndex, strLayerTag, pArg);
 }
 
+CGameObject* CGameInstance::Get_GameObject(_uint iLevelIndex, const _wstring& strLayerTag, _uint iIndex)
+{
+	return m_pObject_Manager->Get_GameObject(iLevelIndex, strLayerTag, iIndex);
+}
+
 #pragma endregion
 
 #pragma region RENDERER
@@ -256,12 +268,34 @@ const _float4* CGameInstance::Get_CamPosition()
 
 #pragma endregion
 
+#pragma region PICKING
+
+void CGameInstance::Transform_MouseRay_ToLocalSpace(const _matrix& WorldMatrix)
+{
+	return m_pPicking->Transform_ToLocalSpace(WorldMatrix);
+}
+_bool CGameInstance::isPicked_InWorldSpace(const _fvector& vPointA, const _fvector& vPointB, const _fvector& vPointC, _vector* pOut)
+{
+	return m_pPicking->isPicked_InWorldSpace(vPointA, vPointB, vPointC, pOut);
+}
+_bool CGameInstance::isPicked_InLocalSpace(const _fvector& vPointA, const _fvector& vPointB, const _fvector& vPointC, _vector* pOut)
+{
+	return m_pPicking->isPicked_InLocalSpace(vPointA, vPointB, vPointC, pOut);
+}
+_bool CGameInstance::isPicked_InLocalSpace(const _fvector& vPointA, const _fvector& vPointB, const _fvector& vPointC, _vector* pOut, _float* pDist)
+{
+	return m_pPicking->isPicked_InLocalSpace(vPointA, vPointB, vPointC, pOut, pDist);
+}
+
+#pragma endregion
+
 
 void CGameInstance::Release_Engine()
 {
 	DestroyInstance();
 
 	Safe_Release(m_pPipeLine);
+	Safe_Release(m_pPicking);
 	Safe_Release(m_pTimer_Manager);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pPrototype_Manager);

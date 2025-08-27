@@ -1,4 +1,4 @@
-#include "Picking.h"
+#include "..\Public\Picking.h"
 #include "GameInstance.h"
 
 CPicking::CPicking(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -44,12 +44,20 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	m_ePrimitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 #pragma region VERTEX_BUFFER
-	D3D11_BUFFER_DESC		VBDesc{};
+	/*D3D11_BUFFER_DESC		VBDesc{};
 	VBDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
 	VBDesc.Usage = D3D11_USAGE_DEFAULT;
 	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VBDesc.StructureByteStride = m_iVertexStride;
 	VBDesc.CPUAccessFlags = 0;
+	VBDesc.MiscFlags = 0;*/
+
+	D3D11_BUFFER_DESC VBDesc{};
+	VBDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
+	VBDesc.Usage = D3D11_USAGE_DYNAMIC; // DYNAMIC으로 설정
+	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	VBDesc.StructureByteStride = m_iVertexStride;
+	VBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // CPU_ACCESS_WRITE 추가
 	VBDesc.MiscFlags = 0;
 
 	VTXNORTEX* pVertices = new VTXNORTEX[m_iNumVertices];
@@ -158,6 +166,76 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 HRESULT CVIBuffer_Terrain::Initialize(void* pArg)
 {
 	return S_OK;
+}
+
+void CVIBuffer_Terrain::Change_Height(_vector vPickingPos, _float fHeight, _float fRadius)
+{
+	// 1. Picking 영역 내의 정점 높이만 변경 (로컬 메모리 m_pVertexPositions)
+	_float fRadiusSq = fRadius * fRadius;
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		_vector vVertexPos = XMLoadFloat3(&m_pVertexPositions[i]);
+		_vector vDist = vVertexPos - vPickingPos;
+		_float fDistSq = XMVectorGetX(XMVector3Dot(vDist, vDist));
+
+		if (fDistSq < fRadiusSq)
+		{
+			//_float fRatio = 1.0f - (fDistSq / fRadiusSq);
+			m_pVertexPositions[i].y += fHeight/* * fRatio*/;
+		}
+	}
+
+	// 2. 변경된 m_pVertexPositions를 기반으로 새로운 정점 데이터(VTXNORTEX)를 생성
+	VTXNORTEX* pVertices = new VTXNORTEX[m_iNumVertices];
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		pVertices[i].vPosition = m_pVertexPositions[i];
+		// 노멀은 나중에 다시 계산할 것이므로 일단 초기화
+		pVertices[i].vNormal = _float3(0.f, 0.f, 0.f);
+		pVertices[i].vTexcoord = _float2(m_pVertexPositions[i].x / (m_iNumVerticesX - 1.f), m_pVertexPositions[i].z / (m_iNumVerticesZ - 1.f));
+	}
+
+	// 3. 인덱스 배열을 이용해 노멀 재계산
+	for (size_t i = 0; i < m_iNumVerticesZ - 1; i++)
+	{
+		for (size_t j = 0; j < m_iNumVerticesX - 1; j++)
+		{
+			_uint iIndex = i * m_iNumVerticesX + j;
+			_uint iIndices[4] = { iIndex + m_iNumVerticesX, iIndex + m_iNumVerticesX + 1, iIndex + 1, iIndex };
+
+			// 삼각형 1 (iIndices[0], iIndices[1], iIndices[2])
+			_vector vSourDir1 = XMLoadFloat3(&pVertices[iIndices[1]].vPosition) - XMLoadFloat3(&pVertices[iIndices[0]].vPosition);
+			_vector vDestDir1 = XMLoadFloat3(&pVertices[iIndices[2]].vPosition) - XMLoadFloat3(&pVertices[iIndices[1]].vPosition);
+			_vector vNormal1 = XMVector3Normalize(XMVector3Cross(vSourDir1, vDestDir1));
+
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[1]].vNormal, XMLoadFloat3(&pVertices[iIndices[1]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal1);
+
+			// 삼각형 2 (iIndices[0], iIndices[2], iIndices[3])
+			_vector vSourDir2 = XMLoadFloat3(&pVertices[iIndices[2]].vPosition) - XMLoadFloat3(&pVertices[iIndices[0]].vPosition);
+			_vector vDestDir2 = XMLoadFloat3(&pVertices[iIndices[3]].vPosition) - XMLoadFloat3(&pVertices[iIndices[2]].vPosition);
+			_vector vNormal2 = XMVector3Normalize(XMVector3Cross(vSourDir2, vDestDir2));
+
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[3]].vNormal, XMLoadFloat3(&pVertices[iIndices[3]].vNormal) + vNormal2);
+		}
+	}
+
+	// 4. 노멀 벡터 정규화
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		XMStoreFloat3(&pVertices[i].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[i].vNormal)));
+	}
+
+	// 5. 정점 버퍼에 최종 업데이트된 데이터(위치, 노멀, 텍스처 좌표)를 매핑하여 복사
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	memcpy(MappedResource.pData, pVertices, m_iVertexStride * m_iNumVertices);
+	m_pContext->Unmap(m_pVB, 0);
+
+	Safe_Delete_Array(pVertices);
 }
 
 CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath)

@@ -60,6 +60,10 @@ public:
 #pragma region OBJECT_MANAGER
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	HRESULT Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
+
+	class CGameObject* Get_GameObject(_uint iLevelIndex, const _wstring& strLayerTag, _uint iIndex = 0);
+	void Delete_Latest_GameObject();
+
 #pragma endregion
 
 
@@ -79,7 +83,10 @@ public:
 #pragma endregion
 
 #pragma region PICKING
-
+	void Transform_MouseRay_ToLocalSpace(const _matrix& WorldMatrix);
+	_bool isPicked_InWorldSpace(const _fvector& vPointA, const _fvector& vPointB, const _fvector& vPointC, _vector* pOut);
+	_bool isPicked_InLocalSpace(const _fvector& vPointA, const _fvector& vPointB, const _fvector& vPointC, _vector* pOut);
+	_bool isPicked_InLocalSpace(const _fvector& vPointA, const _fvector& vPointB, const _fvector& vPointC, _vector* pOut, _float* pDist);
 #pragma endregion
 
 
@@ -93,6 +100,7 @@ private:
 	class CRenderer*				m_pRenderer = { nullptr };
 	class CPicking*					m_pPicking = { nullptr };
 	class CPipeLine*				m_pPipeLine = { nullptr };
+
 
 public:
 	void Release_Engine();

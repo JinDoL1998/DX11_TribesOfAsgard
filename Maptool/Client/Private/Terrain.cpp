@@ -11,6 +11,50 @@ CTerrain::CTerrain(const CTerrain& Prototype)
 {
 }
 
+_bool CTerrain::Pick_Terrain(_vector* PickingPos)
+{
+	if (nullptr == m_pVIBufferCom)
+		return false;
+
+	// Terrain의 월드 행렬을 로컬 공간 픽킹 레이에 적용
+	m_pGameInstance->Transform_MouseRay_ToLocalSpace(m_pTransformCom->Get_WorldMatrixInverse());
+
+	// 지형의 정점 배열을 가져와 삼각형 단위로 픽킹 검사
+	_float3* pVertexPositions = m_pVIBufferCom->Get_VertexPosition();	// 이 함수는 추가해야 합니다.
+	_uint iNumVerticesX = m_pVIBufferCom->Get_NumVerticesX();			// 이 함수도 추가해야 합니다.
+	_uint iNumVerticesZ = m_pVIBufferCom->Get_NumVerticesZ();			// 이 함수도 추가해야 합니다.
+
+	for (_uint i = 0; i < iNumVerticesZ - 1; ++i)
+	{
+		for (_uint j = 0; j < iNumVerticesX - 1; ++j)
+		{
+			// 삼각형 정점 1 (삼각형 1)
+			_vector vPointA = XMLoadFloat3(&pVertexPositions[i * iNumVerticesX + j]);
+			_vector vPointB = XMLoadFloat3(&pVertexPositions[i * iNumVerticesX + j + 1]);
+			_vector vPointC = XMLoadFloat3(&pVertexPositions[(i + 1) * iNumVerticesX + j + 1]);
+
+			if (m_pGameInstance->isPicked_InLocalSpace(vPointA, vPointB, vPointC, PickingPos))
+			{
+				*PickingPos = XMVector3TransformCoord(*PickingPos, m_pTransformCom->Get_WorldMatrix());
+				return true;
+			}
+
+			// 삼각형 정점 2 (삼각형 2)
+			vPointA = XMLoadFloat3(&pVertexPositions[i * iNumVerticesX + j]);
+			vPointB = XMLoadFloat3(&pVertexPositions[(i + 1) * iNumVerticesX + j + 1]);
+			vPointC = XMLoadFloat3(&pVertexPositions[(i + 1) * iNumVerticesX + j]);
+
+			if (m_pGameInstance->isPicked_InLocalSpace(vPointA, vPointB, vPointC, PickingPos))
+			{
+				*PickingPos = XMVector3TransformCoord(*PickingPos, m_pTransformCom->Get_WorldMatrix());
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 HRESULT CTerrain::Initialize_Prototype()
 {
 	return S_OK;
@@ -57,6 +101,17 @@ HRESULT CTerrain::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CTerrain::Change_Height(_vector vPickingPos, _float fHeight, _float fRadius)
+{
+
+	if (nullptr == m_pVIBufferCom)
+		return;
+
+	_vector vLocalPickedPos = XMVector3TransformCoord(vPickingPos, m_pTransformCom->Get_WorldMatrixInverse());
+	m_pVIBufferCom->Change_Height(vLocalPickedPos, fHeight, fRadius);
+
 }
 
 HRESULT CTerrain::Ready_Components()

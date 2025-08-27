@@ -24,6 +24,9 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+
+	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 10.f, 100.f, 1.f));
+
 	return S_OK;
 }
 
@@ -40,6 +43,13 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 
 	if (m_pGameInstance->Key_Pressing(DIK_D))
 		m_pTransformCom->Go_Right(fTimeDelta);
+
+	if (m_pGameInstance->Key_Pressing(DIK_SPACE))
+		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, 15.f * fTimeDelta, 0.f, 0.f));
+
+	if (m_pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) - XMVectorSet(0.f, 15.f * fTimeDelta, 0.f, 0.f));
+
 
 	_long MouseMove = {};
 

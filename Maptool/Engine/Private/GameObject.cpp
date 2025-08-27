@@ -34,16 +34,25 @@ HRESULT CGameObject::Initialize(void* pArg)
 	if (nullptr == m_pTransformCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Initialize(pArg)))
-		return E_FAIL;
-
+	// pArg가 nullptr이 아니면 GAMEOBJECT_DESC를 사용해 초기화
 	if (nullptr != pArg)
 	{
 		GAMEOBJECT_DESC* pDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+
+		// pArg의 정보를 사용하여 Transform 초기화
+		if (FAILED(m_pTransformCom->Initialize(pDesc)))
+			return E_FAIL;
+
+		// **핵심: GAMEOBJECT_DESC에 담긴 vPosition으로 Transform 위치 설정**
+		m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&pDesc->vPosition));
+	}
+	else // pArg가 nullptr이면 기본값으로 Transform 초기화
+	{
+		if (FAILED(m_pTransformCom->Initialize(nullptr)))
+			return E_FAIL;
 	}
 
 	m_Components.emplace(g_strTransformTag, m_pTransformCom);
-
 	Safe_AddRef(m_pTransformCom);
 
 	return S_OK;

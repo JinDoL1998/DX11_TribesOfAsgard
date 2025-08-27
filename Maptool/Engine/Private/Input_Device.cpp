@@ -1,4 +1,3 @@
-
 #include "Input_Device.h"
 
 Engine::CInput_Device::CInput_Device(void)

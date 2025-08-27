@@ -49,8 +49,6 @@ HRESULT CMonster::Render()
 		return E_FAIL;
 
 
-
-
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (size_t i = 0; i < iNumMeshes; i++)

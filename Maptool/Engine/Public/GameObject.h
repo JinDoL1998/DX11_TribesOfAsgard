@@ -9,7 +9,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
 	{
-
+		_float4 vPosition = { 0.f, 0.f, 0.f, 1.f };
 	}GAMEOBJECT_DESC;
 
 protected:
