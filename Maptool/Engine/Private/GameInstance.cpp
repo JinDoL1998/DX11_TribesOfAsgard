@@ -224,6 +224,21 @@ CGameObject* CGameInstance::Get_GameObject(_uint iLevelIndex, const _wstring& st
 	return m_pObject_Manager->Get_GameObject(iLevelIndex, strLayerTag, iIndex);
 }
 
+list<class CGameObject*>* CGameInstance::Get_GameObjectList(_uint iLevelIndex, const _wstring& strLayerTag)
+{
+	return m_pObject_Manager->Get_GameObjectList(iLevelIndex, strLayerTag);
+}
+
+void CGameInstance::Delete_Object_All(_uint iLevelIndex, const _wstring& strLayerTag)
+{
+	m_pObject_Manager->Delete_Object_All(iLevelIndex, strLayerTag);
+}
+
+void CGameInstance::Delete_Object_Latest(_uint iLevelIndex, const _wstring& strLayerTag)
+{
+	m_pObject_Manager->Delete_Object_Latest(iLevelIndex, strLayerTag);
+}
+
 #pragma endregion
 
 #pragma region RENDERER

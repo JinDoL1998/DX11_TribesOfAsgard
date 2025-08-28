@@ -58,6 +58,9 @@
     <Filter Include="100.IMGUI\Manager">
       <UniqueIdentifier>{0563d2c5-f2b3-4166-96aa-dbb197923520}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\YggDrasil">
+      <UniqueIdentifier>{745317fe-6928-4947-a821-49c526efd084}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -141,6 +144,9 @@
     <ClInclude Include="..\public\Imgui_Manager.h">
       <Filter>100.IMGUI\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\YggDrasil.h">
+      <Filter>02.GameObjects\YggDrasil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -221,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Imgui_Manager.cpp">
       <Filter>100.IMGUI\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\YggDrasil.cpp">
+      <Filter>02.GameObjects\YggDrasil</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

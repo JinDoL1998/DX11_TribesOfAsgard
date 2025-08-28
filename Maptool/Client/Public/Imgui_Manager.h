@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CGameInstance;
 class CTransform;
+class CGameObject;
 NS_END
 
 NS_BEGIN(Client)
@@ -18,14 +19,15 @@ private:
 	virtual ~CImgui_Manager() = default;
 
 public:
-	_bool IsPlacingMonster() { return m_isPlacingMonster; }
-
-public:
 	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Priority_Update(_float fTimeDelta);
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT Render();
+
+	void Update_Rotation();
+	HRESULT Save_Monsters();
+	HRESULT Load_Monsters();
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -34,21 +36,36 @@ private:
 	class CTerrain* m_pTerrain = { nullptr };
 	class CGameInstance* m_pGameInstance = { nullptr };
 	class CTransform* m_pCameraTransform = { nullptr };
+	class CTransform* m_pTransform = { nullptr };
 
+	ADD_TYPE m_eCurrentAddType = { ADD_TYPE::END };
+	
+	// 지형 높이, 반경
 	_float m_fHeight = { 0.f };
 	_float m_fRadius = { 0.f };
 
+	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };
 	_float m_fY = { 0.f };
 	_float m_fZ = { 0.f };
 
-	_bool m_isPlacingMonster = { false };
-	_bool m_isEditingTerrainHeight = { false };
-	_bool m_isIncreaseHeight = { false };
-	_bool m_isDecreaseHeight = { false };
+	// 오브젝트 회전용
+	_float m_fRotX = { 0.f };
+	_float m_fRotY = { 0.f };
+	_float m_fRotZ = { 0.f };
+
+	// 오브젝트 스케일용
+	_float m_fScaleX = { 0.f };
+	_float m_fScaleY = { 0.f };
+	_float m_fScaleZ = { 0.f };
+
+	// 오브젝트 클릭유무
 
 	vector<class CMonster*> m_Monsters; 
+	list<class CGameObject*>* m_pObjects;
 	_bool m_isCancel = { false }; 
+
+	const _tchar* m_CurrentLayerName = {};
 
 public:
 	virtual void Free() override;

@@ -13,6 +13,10 @@ private:
 public:
 	class CComponent* Get_Component(const _wstring& strComponentTag, _uint iIndex = 0);
 	class CGameObject* Get_GameObject(_uint iIndex = 0);
+	list<class CGameObject*>* Get_GameObjectList() { return &m_GameObjects; }
+
+	void Delete_Object_All();
+	void Delete_Object_Latest();
 
 public:
 	HRESULT Add_GameObject(class CGameObject* pGameObject);

@@ -28,6 +28,33 @@ CGameObject* CObject_Manager::Get_GameObject(_uint iLevelIndex, const _wstring& 
 	return pLayer->Get_GameObject(iIndex);
 }
 
+list<CGameObject*>* CObject_Manager::Get_GameObjectList(_uint iLevelIndex, const _wstring& strLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_GameObjectList();
+}
+
+void CObject_Manager::Delete_Object_Latest(_uint iLevelIndex, const _wstring& strLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+	if (nullptr == pLayer)
+		return;
+
+	pLayer->Delete_Object_Latest();
+}
+
+void CObject_Manager::Delete_Object_All(_uint iLevelIndex, const _wstring& strLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+	if (nullptr == pLayer)
+		return;
+
+	pLayer->Delete_Object_All();
+}
+
 HRESULT CObject_Manager::Initialize(_uint iNumLevels)
 {
 	m_iNumLevels = iNumLevels;

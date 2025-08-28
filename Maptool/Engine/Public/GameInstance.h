@@ -62,8 +62,11 @@ public:
 	HRESULT Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 
 	class CGameObject* Get_GameObject(_uint iLevelIndex, const _wstring& strLayerTag, _uint iIndex = 0);
-	void Delete_Latest_GameObject();
+	list<class CGameObject*>* Get_GameObjectList(_uint iLevelIndex, const _wstring& strLayerTag);
+	void Delete_Object_All(_uint iLevelIndex, const _wstring& strLayerTag);
+	void Delete_Object_Latest(_uint iLevelIndex, const _wstring& strLayerTag);
 
+	//void Delete_Latest_GameObject();
 #pragma endregion
 
 

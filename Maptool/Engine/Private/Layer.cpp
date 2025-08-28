@@ -29,6 +29,25 @@ CGameObject* CLayer::Get_GameObject(_uint iIndex)
 	return *iter;
 }
 
+void CLayer::Delete_Object_All()
+{
+	if (true == m_GameObjects.empty())
+		return;
+
+	for (auto& pGameObject : m_GameObjects)
+		Safe_Release(pGameObject);
+	m_GameObjects.clear();
+}
+
+void CLayer::Delete_Object_Latest()
+{
+	if (true == m_GameObjects.empty())
+		return;
+
+	Safe_Release(m_GameObjects.back());
+	m_GameObjects.pop_back();
+}
+
 HRESULT CLayer::Add_GameObject(CGameObject* pGameObject)
 {
 	if (nullptr == pGameObject)

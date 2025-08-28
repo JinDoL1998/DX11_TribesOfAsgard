@@ -10,6 +10,8 @@ public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
 	{
 		_float4 vPosition = { 0.f, 0.f, 0.f, 1.f };
+		_float4 vScale = { 0.f, 0.f, 0.f, 1.f };
+		_float4 vRoatation = { 0.f, 0.f, 0.f, 1.f };
 	}GAMEOBJECT_DESC;
 
 protected:
